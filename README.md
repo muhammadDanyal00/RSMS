@@ -11,7 +11,7 @@ This repository contains the source code for the RSMS project, including both th
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YourUsername/YourRepository.git
+   git clone https://github.com/muhammadDanyal00/RSMS.git
 
 # For the backend
 cd api
