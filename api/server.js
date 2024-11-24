@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import connect from "./utils/dbConnection.js";
 import authRoutes from "./routes/authRoute.js";
 import issueRoutes from "./routes/issueRoute.js";
+import profileRoutes from "./routes/profileRoutes.js";
+
 import cors from "cors";
 
 dotenv.config({ path: "./config/.env" }); // path to my env. varibles ( hidden )
@@ -18,8 +20,8 @@ app.use(cookieParser());
 
 // middelwares for Routes
 app.use("/api/", authRoutes);
-
 app.use("/api/", issueRoutes);
+app.use("/api/user", profileRoutes);
 
 // db integeration
 app.listen(PORT, () => {

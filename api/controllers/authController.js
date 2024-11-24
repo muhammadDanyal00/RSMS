@@ -9,10 +9,17 @@ const jwtSecret = process.env.JWT_SECRET_KEY; // initialize and access the token
 
 // Register==============================================
 export const signup = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { FullName, email, password, phone, address, residentSince } = req.body;
 
   // Consider adding input validation here
-  if (!username || !email || !password) {
+  if (
+    !FullName ||
+    !email ||
+    !password ||
+    !phone ||
+    !address ||
+    !residentSince
+  ) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -28,8 +35,11 @@ export const signup = async (req, res) => {
 
     // Create new user
     const user = new User({
-      username,
+      FullName,
       email,
+      phone,
+      address,
+      residentSince,
       password: hashPassword,
     });
 

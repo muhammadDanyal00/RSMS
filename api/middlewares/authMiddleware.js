@@ -12,10 +12,10 @@ export const authMiddleware = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("Decoded token:", decoded); // For debugging
+    // console.log("Decoded token:", decoded); // For debugging
 
     const user = await User.findById(decoded.userId);
-    console.log("User found:", user); // For debugging
+    // console.log("User found:", user); // For debugging
 
     if (!user) {
       return res
@@ -24,7 +24,7 @@ export const authMiddleware = async (req, res, next) => {
     }
     // req.user = user; // get the full user object
     req.user = user.toObject(); // Convert to a plain JavaScript object
-    console.log("req.user set in middleware:", req.user); // For debugging
+    // console.log("req.user set in middleware:", req.user); // For debugging
     next();
   } catch (error) {
     console.error("Auth Middleware Error:", error);
@@ -33,3 +33,8 @@ export const authMiddleware = async (req, res, next) => {
       .json({ message: "Authentication failed", error: error.message });
   }
 };
+
+// export const isAdmin = async (req, res, next) => {
+//   try {
+//   } catch (error) {}
+// };

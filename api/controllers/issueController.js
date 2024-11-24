@@ -5,7 +5,7 @@ export const createIssue = async (req, res) => {
     const { title, category, location, description } = req.body;
 
     console.log("req.user in createIssue:", req.user); // For debugging
-    console.log("req.user._id:", req.user?._id); // For debugging
+    // console.log("req.user._id:", req.user?._id); // For debugging
 
     if (!req.user || !req.user._id) {
       console.log("User authentication failed"); // For debugging
@@ -23,7 +23,7 @@ export const createIssue = async (req, res) => {
       images: req.files ? req.files.map((file) => file.path) : [],
     });
 
-    console.log("newIssue before save:", newIssue); // For debugging
+    // console.log("newIssue before save:", newIssue); // For debugging
 
     const savedIssue = await newIssue.save();
     res
@@ -39,6 +39,7 @@ export const createIssue = async (req, res) => {
 
 // -------------------------------------------------------------------------------------------------
 
+// to get all of your issues your reported
 export const getMyReports = async (req, res) => {
   try {
     const issues = await Issue.find({ author: req.user._id })
@@ -54,6 +55,7 @@ export const getMyReports = async (req, res) => {
 
 // -------------------------------------------------------------------------------------------------
 
+// To display all the details of any issue you want
 export const getIssueDetails = async (req, res) => {
   try {
     const issue = await Issue.findById(req.params.id);
@@ -67,6 +69,8 @@ export const getIssueDetails = async (req, res) => {
       .json({ message: "Error fetching issue details", error: error.message });
   }
 };
+
+// ------------------------------------------------------------------------------------------------------
 
 export const updateIssueStatus = async (req, res) => {
   try {

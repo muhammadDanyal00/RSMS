@@ -1,47 +1,84 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../api/api";
+import ChangePassword from "../components/ChangePassword";
+import DeleteAccountButton from "../components/DeleteAccountButton";
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
+  const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [profileData, setProfileData] = useState({
+    FullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    residentSince: "",
+  });
+
+  // Fetch profile data on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await api.get("/user/profile");
+        setProfileData(response.data);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProfileData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  // Handle profile updates
+  const handleUpdateProfile = async () => {
+    try {
+      await api.put("/user/profile", profileData);
+      setIsEditing(false);
+      console.log("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
+
+  // Open change password modal
+  const openChangePasswordModal = () => setChangePasswordOpen(true);
+  const closeChangePasswordModal = () => setChangePasswordOpen(false);
 
   return (
     <div className="max-w-2xl mx-auto p-4 sm:p-6">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-800 dark:text-white">
         My Profile
       </h1>
+      <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+        <span className="font-medium text-gray-800 dark:text-white">
+          Resident Since:
+        </span>
+        <span className="font-semibold text-blue-600 dark:text-blue-400">
+          {profileData.residentSince}
+        </span>
+      </p>
 
       {/* Profile Card */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-center sm:space-x-4 mb-6">
-          <div className="w-24 h-24 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mb-4 sm:mb-0">
-            <img
-              src="/user.png"
-              alt="User"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="text-center sm:text-left">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-              Muhammad
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Resident since 2020
-            </p>
-          </div>
-        </div>
-
         <form className="space-y-4 sm:space-y-6">
           {/* Name */}
           <div>
             <label
-              htmlFor="name"
+              htmlFor="FullName"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               Name
             </label>
             <input
-              id="name"
+              id="FullName"
+              name="FullName"
               className="block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white text-sm"
-              defaultValue="Muhammad"
+              value={profileData.FullName}
+              onChange={handleInputChange}
               readOnly={!isEditing}
             />
           </div>
@@ -56,9 +93,11 @@ export default function Profile() {
             </label>
             <input
               id="email"
+              name="email"
               type="email"
               className="block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white text-sm"
-              defaultValue="mhmd12@example.com"
+              value={profileData.email}
+              onChange={handleInputChange}
               readOnly={!isEditing}
             />
           </div>
@@ -73,9 +112,11 @@ export default function Profile() {
             </label>
             <input
               id="phone"
+              name="phone"
               type="tel"
               className="block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white text-sm"
-              defaultValue="+1 (555) 123-4567"
+              value={profileData.phone}
+              onChange={handleInputChange}
               readOnly={!isEditing}
             />
           </div>
@@ -90,8 +131,10 @@ export default function Profile() {
             </label>
             <input
               id="address"
+              name="address"
               className="block w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white text-sm"
-              defaultValue="123 Main St, Apt 4B"
+              value={profileData.address}
+              onChange={handleInputChange}
               readOnly={!isEditing}
             />
           </div>
@@ -107,8 +150,8 @@ export default function Profile() {
                 Cancel
               </button>
               <button
-                type="submit"
-                onClick={() => setIsEditing(false)}
+                type="button"
+                onClick={handleUpdateProfile}
                 className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 text-sm"
               >
                 Save Changes
@@ -147,7 +190,7 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* Change Password */}
+        {/* Change Password Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
           <div>
             <h3 className="font-medium text-gray-800 dark:text-white">
@@ -157,25 +200,22 @@ export default function Profile() {
               Update your account password
             </p>
           </div>
-          <button className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">
+          <button
+            onClick={openChangePasswordModal}
+            className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+          >
             Change
           </button>
         </div>
 
+        {/* Change Password Modal */}
+        <ChangePassword
+          isOpen={isChangePasswordOpen}
+          onClose={closeChangePasswordModal}
+        />
+
         {/* Delete Account */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-          <div>
-            <h3 className="font-medium text-gray-800 dark:text-white">
-              Delete Account
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Permanently delete your account and all data
-            </p>
-          </div>
-          <button className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 text-sm">
-            Delete
-          </button>
-        </div>
+        <DeleteAccountButton />
       </div>
     </div>
   );

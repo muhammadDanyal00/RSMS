@@ -28,12 +28,6 @@ const LandingPage = () => {
             <h1 className="text-2xl font-bold text-gray-900">RSMS</h1>
           </div>
           <nav className="space-x-4">
-            <Link
-              to="/admin"
-              className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-500 transition-all"
-            >
-              Admin?
-            </Link>
             <button
               onClick={toggleLoginModal}
               className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-500 transition-all"
@@ -95,6 +89,17 @@ const LandingPage = () => {
                 {isLogin ? "Sign Up" : "Log In"}
               </button>
             </p>
+            {/* Admin Link */}
+            {isLogin && (
+              <p className="text-center text-gray-600 mt-2">
+                <Link
+                  to="/admin"
+                  className="text-blue-600 hover:text-blue-500 transition-all"
+                >
+                  Are you an admin?
+                </Link>
+              </p>
+            )}
           </div>
         </div>
       )}
